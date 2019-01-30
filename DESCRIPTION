@@ -1,0 +1,10 @@
+Package: loadcell
+Title: Tools for processing load cell data for DMR Vertical Line project.
+Version: 0.0.0.9000
+Authors@R: person("Bill", "DeVoe", email = "william.devoe@maine.gov", role = c("aut", "cre"))
+Description: Tools for processing load cell data for DMR Vertical Line project.
+Depends: R (>= 3.4)
+License: DMR/affiliate use only.
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0
