@@ -18,7 +18,7 @@ parse_peaks(data, span = 0.05, peakdist = 10, peakheight = 200)
 \value{
 An object of class `LoadCellPeaks`, containing all the attributes of
 object class `LoadCellHauls`, plus the following attributes:
-\itemize{
+\describe{
 \item{span}{The span used to apply Loess smoothing.}
 \item{peakdist}{The peak distance parameter used to apply Loess smoothing.}
 \item{peakheight}{The peak height parameter used to apply Loess smoothing.}
@@ -28,8 +28,8 @@ False, the remaining attributes will not be present.}
 located in the smoothed data for the top trapcount peaks.}
 \item{smoothed_valleys}{A dataframe containing the Index and Load for valleys
 located in the smoothed data corresponding to peaks located.}
-\item{smoothed}{A numeric vector indicating the load values for each indice
-in the load after Loess smoothing was applied.}
+\item{smoothed}{A dataframe containing the Index and Load for each load
+after Loess smoothing was applied.}
 \item{actual_peaks}{A dataframe containing the Index and Load values for
 actual peaks corresponding to the smoothed peaks located within the load cell
  data.}

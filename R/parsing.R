@@ -110,7 +110,7 @@ load_csvs <- function(dir = getwd()) {
 #' represented by a unique name constructed by concaternation of the load cell
 #' serial number, date, and haul number, ie "SN-2018-03-24-1". Each item has
 #' attributes as follows:
-#' \itemize{
+#' \describe{
 #' \item{haul}{The haul number of the data.}
 #' \item{data}{A dataframe containing the load cell data for the haul.}
 #' \item{sn}{Serial number of the load cell adapter.}
@@ -271,7 +271,7 @@ parse_hauls <- function(data, split, min_load, min_time, min_gap, pass) {
 #' @param peakheight The minimum height of peaks in LBF
 #' @return An object of class `LoadCellPeaks`, containing all the attributes of
 #' object class `LoadCellHauls`, plus the following attributes:
-#' \itemize{
+#' \describe{
 #' \item{span}{The span used to apply Loess smoothing.}
 #' \item{peakdist}{The peak distance parameter used to apply Loess smoothing.}
 #' \item{peakheight}{The peak height parameter used to apply Loess smoothing.}
@@ -281,8 +281,8 @@ parse_hauls <- function(data, split, min_load, min_time, min_gap, pass) {
 #' located in the smoothed data for the top trapcount peaks.}
 #' \item{smoothed_valleys}{A dataframe containing the Index and Load for valleys
 #' located in the smoothed data corresponding to peaks located.}
-#' \item{smoothed}{A numeric vector indicating the load values for each indice
-#' in the load after Loess smoothing was applied.}
+#' \item{smoothed}{A dataframe containing the Index and Load for each load
+#' after Loess smoothing was applied.}
 #' \item{actual_peaks}{A dataframe containing the Index and Load values for
 #' actual peaks corresponding to the smoothed peaks located within the load cell
 #'  data.}
@@ -375,13 +375,14 @@ parse_peaks <- function(data, span=.05, peakdist=10, peakheight=200) {
     data[[i]]$peak_analysis <- T
     # Convert smoothed peaks to df, cleanup fields
     smoothed_peaks <- data.frame(peaks)
-    names(smoothed_peaks) <- c("Index", "Load")
+    names(smoothed_peaks) <- c("Load", "Index")
     smoothed_peaks <- smoothed_peaks[c("Index", "Load")]
     data[[i]]$smoothed_peaks <- smoothed_peaks
     # Smoothed valleys
     data[[i]]$smoothed_valleys <- valleys
     # Smoothed line
-    data[[i]]$smoothed <- smooth
+    data[[i]]$smoothed <- data.frame(Index = seq(1:length(smooth)),
+                                     Load = smooth)
     # Actual peaks
     actualpeaks <- actualpeaks[c("Load", "Index")]
     data[[i]]$actual_peaks <- actualpeaks

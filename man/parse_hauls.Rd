@@ -36,7 +36,7 @@ An object of class `LoadCellHauls`. Each item in the class is
 represented by a unique name constructed by concaternation of the load cell
 serial number, date, and haul number, ie "SN-2018-03-24-1". Each item has
 attributes as follows:
-\itemize{
+\describe{
 \item{haul}{The haul number of the data.}
 \item{data}{A dataframe containing the load cell data for the haul.}
 \item{sn}{Serial number of the load cell adapter.}
