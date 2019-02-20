@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 ## Installing loadcell
 
-`loadcell` is a local package, and requires `devtools` for installation.
+`loadcell` is a non-CRAN package, and requires `devtools` for installation.
 
 First, install `devtools` with the following command:
 
@@ -28,10 +28,12 @@ First, install `devtools` with the following command:
 install.packages('devtools')
 ``` 
 
-Then, install the load cell package with the following command, substituting the local path to the `loadcell` package directory. This will install the package along with the several dependencies. 
+Then, install the load cell package directly from Bill's GitHub account with the following command:
 
 ```{r eval=FALSE}
-devtools::install_local(path='X:\\R\\Internal_Packages\\loadcell', dependencies = T)
+## Install LoadCell from Bill's GitHub
+devtools::install_github(repo = "bdevoe/loadcell",
+                         auth_token = "de3bbc4b1df6ffeb03127b023edf68cd8b9e1755")
 ``` 
 
 ## Basic function use
@@ -51,13 +53,23 @@ csv_data <- load_csvs()
 str(csv_data)
 ```
 
+### Adjusting load values
+
+Load values can be adjusted for the angle of the line through the block by applying a load multiplier.
+
+```{r eval=TRUE}
+# Adjust load values
+csv_data_adj <- adjust_load(data = csv_data, kfactor = 0.6)
+```
+
+
 ### Parsing Hauls
 
 After CSVs are loaded, hauls can be parsed. The `parse_hauls` function handles this and has several options for how hauls should be delimited from load cell data. More details on these parameters is in the function help. In this example, `split = T` is being used to indicate the CSVs need to be split into separate hauls. If a fisherman created a separate CSV file for each haul, `split = F` would be used to simply number the hauls.
 
 ```{r eval=TRUE}
 # Parse hauls from LoadCellData class object
-haul_data <- parse_hauls(csv_data, split = T, # Split hauls within CSV
+haul_data <- parse_hauls(csv_data_adj, split = T, # Split hauls within CSV
                          min_load = 40, # Remove data < 40LBF
                          min_time = 30, # Minimum 30 seconds haul length
                          min_gap = 30, # Minimum 30 seconds between hauls

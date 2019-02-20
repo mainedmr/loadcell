@@ -1,17 +1,29 @@
 #' Load to tension
 #'
-#' Calculates the tension on a line travelling through a block based on the load
-#' on the block and included angle of the line over the block.
+#' Adjusts load values from CSV data based on a correction multipler (the
+#' Keliher conversion factor.)
 #'
 #' @rdname adjust_load
 #' @author Bill DeVoe, \email{William.DeVoe@@maine.gov}
-#' @param load Numeric vector of load value or values to adjust.
-#' @param angle The included angle across the block in degrees.
-#' @return A numeric vector representing the adjusted load value.
-adjust_load <- function(load, angle) {
-  # TODO: Figure this out and then export function
-  message("This function is yet to be implemented.")
-  return(load)
+#' @param data An object of class `LoadCellData`.
+#' @param kfactor The Keliher conversion factor to apply to the load data.
+#' @return An object of class `LoadCellData.`
+#' @export
+adjust_load <- function(data, kfactor) {
+  # Check that input data is of correct class
+  if (class(data) != "LoadCellData") {
+    stop("Data passed to function adjust_load must be of class LoadCellData.")
+  }
+  # For each haul
+  for (i in 1:length(data)) {
+    # Add a column for the original raw load
+    data[[i]]$data$Raw_Load <- data[[i]]$data$Load
+    # Multiply the load by the correction factor
+    data[[i]]$data$Load <- data[[i]]$data$Load * kfactor
+    # Store correction factor
+    data[[i]]$kfactor <- kfactor
+  }
+  return(data)
 }
 
 
@@ -80,7 +92,8 @@ export_loadcell <- function(data, prefix) {
                             end_dt = data[[i]]$end_dt,
                             seconds = data[[i]]$seconds,
                             max_load = data[[i]]$max_load,
-                            min_load = data[[i]]$min_load)
+                            min_load = data[[i]]$min_load,
+                            kfactor = data[[i]]$kfactor)
     # If data is of class LoadCellPeaks, also add the peak analysis attributes
     if (class(data) == "LoadCellPeaks") {
       haul_data$span <- data[[i]]$span

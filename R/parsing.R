@@ -21,6 +21,7 @@
 #' \item{min_load}{An integer representing the minimum load within the CSV;
 #' useful for determining a "zero" value for the weight of the block with no
 #' line.}
+#' \item{kfactor}{The Keliher conversion factor applied to the data.}
 #' }
 #' @export
 load_csvs <- function(dir = getwd()) {
@@ -52,7 +53,10 @@ load_csvs <- function(dir = getwd()) {
     sn <- gsub(pattern = ".csv", replacement = "",
                   x = unlist(strsplit(csv, "-", fixed = T))[1],
                   ignore.case = T)
+    # Placeholder for load adjustment factor
+    kfactor <- 0
     # Get number of traps from filename if available
+    traps <- 0
     traps <- try(as.numeric(gsub(pattern = ".csv", replacement = "",
                   x = unlist(strsplit(csv, "-", fixed = T))[4],
                   ignore.case = T)))
@@ -72,7 +76,7 @@ load_csvs <- function(dir = getwd()) {
     data_list[[csv]] <- list(data = data, sn = sn, traps = traps,
                              start_dt = start.dt, end_dt = end.dt,
                              seconds = seconds, max_load = csv.max,
-                             min_load = csv.min)
+                             min_load = csv.min, kfactor = kfactor)
   }
   class(data_list) <- "LoadCellData"
   return(data_list)
@@ -119,6 +123,7 @@ load_csvs <- function(dir = getwd()) {
 #' \item{end_dt}{A POSIXlt object representing the end datetime of the haul.}
 #' \item{seconds}{The number of elapsed seconds in the haul.}
 #' \item{max_load}{An integer representing the maximum load within the haul.}
+#' \item{kfactor}{The Keliher conversion factor applied to the data.}
 #' }
 #' @importFrom methods hasArg
 #' @export
@@ -156,7 +161,8 @@ parse_hauls <- function(data, split, min_load, min_time, min_gap, pass) {
       haul_list[[uid]] <- list(haul = haul, data = csv$data, sn = csv$sn,
                                traps = csv$traps, start_dt = csv$start_dt,
                                end_dt = csv$end_dt, seconds = csv$seconds,
-                               max_load = csv$max_load, min_load = csv$min_load)
+                               max_load = csv$max_load, min_load = csv$min_load,
+                               kfactor = csv$kfactor)
       # Increment haul number
       haul = haul + 1
       # Next CSV
@@ -177,7 +183,8 @@ parse_hauls <- function(data, split, min_load, min_time, min_gap, pass) {
         haul_list[[uid]] <- list(haul = haul, data = csv$data, sn = csv$sn,
                                  traps = csv$traps, start_dt = csv$start_dt,
                                  end_dt = csv$end_dt, seconds = csv$seconds,
-                                 max_load = csv$max_load, min_load = csv$min_load)
+                                 max_load = csv$max_load,
+                                 min_load = csv$min_load, kfactor = csv$kfactor)
         # Increment haul number
         haul = haul + 1
         # Next CSV
@@ -250,7 +257,8 @@ parse_hauls <- function(data, split, min_load, min_time, min_gap, pass) {
       haul_list[[uid]] <- list(haul = adj_haul, data = d, sn = csv$sn,
                                traps = csv$traps, start_dt = first_time,
                                end_dt = last_time, seconds = haul_len,
-                               max_load = max(df$Load), min_load = min(df$Load))
+                               max_load = max(df$Load), min_load = min(df$Load),
+                               kfactor = csv$kfactor)
     }
   }
   # Assign haul list class of LoadCellHauls

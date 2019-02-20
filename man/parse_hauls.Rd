@@ -45,6 +45,7 @@ attributes as follows:
 \item{end_dt}{A POSIXlt object representing the end datetime of the haul.}
 \item{seconds}{The number of elapsed seconds in the haul.}
 \item{max_load}{An integer representing the maximum load within the haul.}
+\item{kfactor}{The Keliher conversion factor applied to the data.}
 }
 }
 \description{

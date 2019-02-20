@@ -25,6 +25,7 @@ attributes:
 \item{min_load}{An integer representing the minimum load within the CSV;
 useful for determining a "zero" value for the weight of the block with no
 line.}
+\item{kfactor}{The Keliher conversion factor applied to the data.}
 }
 }
 \description{

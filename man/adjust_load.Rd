@@ -4,19 +4,19 @@
 \alias{adjust_load}
 \title{Load to tension}
 \usage{
-adjust_load(load, angle)
+adjust_load(data, kfactor)
 }
 \arguments{
-\item{load}{Numeric vector of load value or values to adjust.}
+\item{data}{An object of class `LoadCellData`.}
 
-\item{angle}{The included angle across the block in degrees.}
+\item{kfactor}{The Keliher conversion factor to apply to the load data.}
 }
 \value{
-A numeric vector representing the adjusted load value.
+An object of class `LoadCellData.`
 }
 \description{
-Calculates the tension on a line travelling through a block based on the load
-on the block and included angle of the line over the block.
+Adjusts load values from CSV data based on a correction multipler (the
+Keliher conversion factor.)
 }
 \author{
 Bill DeVoe, \email{William.DeVoe@maine.gov}

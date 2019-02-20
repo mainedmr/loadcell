@@ -9,7 +9,8 @@ Department of Marine Resources.
 Installing loadcell
 -------------------
 
-`loadcell` is a local package, and requires `devtools` for installation.
+`loadcell` is a non-CRAN package, and requires `devtools` for
+installation.
 
 First, install `devtools` with the following command:
 
@@ -17,12 +18,13 @@ First, install `devtools` with the following command:
 install.packages('devtools')
 ```
 
-Then, install the load cell package with the following command,
-substituting the local path to the `loadcell` package directory. This
-will install the package along with the several dependencies.
+Then, install the load cell package directly from Bill’s GitHub account
+with the following command:
 
 ``` r
-devtools::install_local(path='X:\\R\\Internal_Packages\\loadcell', dependencies = T)
+## Install LoadCell from Bill's GitHub
+devtools::install_github(repo = "bdevoe/loadcell",
+                         auth_token = "de3bbc4b1df6ffeb03127b023edf68cd8b9e1755")
 ```
 
 Basic function use
@@ -52,20 +54,31 @@ csv_data <- load_csvs()
 # Examine
 str(csv_data)
 #> List of 1
-#>  $ 17348465-2018.11.15-09.30.24-20.csv:List of 8
-#>   ..$ data    :'data.frame': 26556 obs. of  4 variables:
-#>   .. ..$ TimeStamp: chr [1:26556] "2018-11-15-09:30:25.349" "2018-11-15-09:30:25.704" "2018-11-15-09:30:26.038" "2018-11-15-09:30:26.392" ...
-#>   .. ..$ Seconds  : num [1:26556] 0.375 0.73 1.063 1.417 1.761 ...
-#>   .. ..$ Load     : int [1:26556] 28 28 28 28 28 29 29 29 29 29 ...
-#>   .. ..$ Raw      : num [1:26556] 0.0174 0.0174 0.0174 0.0174 0.0175 ...
-#>   ..$ sn      : chr "17348465"
-#>   ..$ traps   : num 20
-#>   ..$ start_dt: POSIXlt[1:1], format: "2018-11-15 09:30:25"
-#>   ..$ end_dt  : POSIXlt[1:1], format: "2018-11-15 14:54:37"
-#>   ..$ seconds : num 19452
-#>   ..$ max_load: int 4205
-#>   ..$ min_load: int 0
+#>  $ 17348481-2018.11.30-09.58.27-15.csv:List of 9
+#>   ..$ data    :'data.frame': 17228 obs. of  4 variables:
+#>   .. ..$ TimeStamp: chr [1:17228] "2018-11-30-09:58:27.538" "2018-11-30-09:58:27.877" "2018-11-30-09:58:28.220" "2018-11-30-09:58:28.554" ...
+#>   .. ..$ Seconds  : num [1:17228] 0.35 0.69 1.03 1.37 1.72 ...
+#>   .. ..$ Load     : int [1:17228] 40 40 36 35 34 34 35 39 39 38 ...
+#>   .. ..$ Raw      : num [1:17228] 0.0216 0.0215 0.0202 0.0199 0.0197 ...
+#>   ..$ sn      : chr "17348481"
+#>   ..$ traps   : num 15
+#>   ..$ start_dt: POSIXlt[1:1], format: "2018-11-30 09:58:27"
+#>   ..$ end_dt  : POSIXlt[1:1], format: "2018-11-30 11:37:37"
+#>   ..$ seconds : num 5950
+#>   ..$ max_load: int 1764
+#>   ..$ min_load: int 28
+#>   ..$ kfactor : num 0
 #>  - attr(*, "class")= chr "LoadCellData"
+```
+
+### Adjusting load values
+
+Load values can be adjusted for the angle of the line through the block
+by applying a load multiplier.
+
+``` r
+# Adjust load values
+csv_data_adj <- adjust_load(data = csv_data, kfactor = 0.6)
 ```
 
 ### Parsing Hauls
@@ -80,7 +93,7 @@ hauls.
 
 ``` r
 # Parse hauls from LoadCellData class object
-haul_data <- parse_hauls(csv_data, split = T, # Split hauls within CSV
+haul_data <- parse_hauls(csv_data_adj, split = T, # Split hauls within CSV
                          min_load = 40, # Remove data < 40LBF
                          min_time = 30, # Minimum 30 seconds haul length
                          min_gap = 30, # Minimum 30 seconds between hauls
@@ -88,21 +101,22 @@ haul_data <- parse_hauls(csv_data, split = T, # Split hauls within CSV
                                     # assume it is a single haul and do not split
 # Examine the first haul structure
 str(haul_data[[1]])
-#> List of 9
+#> List of 10
 #>  $ haul    : num 1
-#>  $ data    :'data.frame':    11 obs. of  5 variables:
-#>   ..$ TimeStamp: chr [1:11] "2018-11-15-09:41:32.064" "2018-11-15-09:41:32.756" "2018-11-15-09:41:37.247" "2018-11-15-09:41:51.869" ...
-#>   ..$ Seconds  : num [1:11] 667 668 672 687 687 ...
-#>   ..$ Load     : int [1:11] 44 40 41 40 40 43 45 52 64 68 ...
-#>   ..$ Raw      : num [1:11] 0.0221 0.021 0.0212 0.0209 0.0209 ...
-#>   ..$ Index    : int [1:11] 1 2 3 4 5 6 7 8 9 10 ...
-#>  $ sn      : chr "17348465"
-#>  $ traps   : num 20
-#>  $ start_dt: POSIXlt[1:1], format: "2018-11-15 09:41:32"
-#>  $ end_dt  : POSIXlt[1:1], format: "2018-11-15 09:42:11"
-#>  $ seconds : num 39
-#>  $ max_load: int 68
-#>  $ min_load: int 40
+#>  $ data    :'data.frame':    1460 obs. of  5 variables:
+#>   ..$ TimeStamp: chr [1:1460] "2018-11-30-10:04:37.809" "2018-11-30-10:04:38.154" "2018-11-30-10:04:38.501" "2018-11-30-10:04:38.838" ...
+#>   ..$ Seconds  : num [1:1460] 371 371 371 372 372 ...
+#>   ..$ Load     : num [1:1460] 44.4 54.6 69.6 74.4 74.4 ...
+#>   ..$ Raw      : num [1:1460] 0.0318 0.0367 0.0443 0.0466 0.0468 ...
+#>   ..$ Index    : int [1:1460] 1 2 3 4 5 6 7 8 9 10 ...
+#>  $ sn      : chr "17348481"
+#>  $ traps   : num 15
+#>  $ start_dt: POSIXlt[1:1], format: "2018-11-30 10:04:37"
+#>  $ end_dt  : POSIXlt[1:1], format: "2018-11-30 10:13:06"
+#>  $ seconds : num 509
+#>  $ max_load: num 1058
+#>  $ min_load: num 42
+#>  $ kfactor : num 0.6
 ```
 
 Looking at the structure of `haul_data`, note that the single CSV has
@@ -127,49 +141,40 @@ peaks <- parse_peaks(data = haul_data,
                      span=.05, # Percent smoothing to apply
                      peakdist=10, # Minimum 10 samples between peaks
                      peakheight=200) # Minimum peak height of 200 LBF
-#> Loess smoothing was unsuccessful for haul 17348465-2018-11-15-1. Skipping to next haul...
-#> Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-#> parametric, : k-d tree limited by memory. ncmax= 200
-#> Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-#> parametric, : k-d tree limited by memory. ncmax= 281
-#> Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-#> parametric, : k-d tree limited by memory. ncmax= 246
-#> Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-#> parametric, : k-d tree limited by memory. ncmax= 200
-#> No peaks found for haul ID 17348465-2018-11-15-15
 # Examine third haul peak analysis
 str(peaks[[3]])
-#> List of 17
+#> List of 18
 #>  $ haul            : num 3
-#>  $ data            :'data.frame':    164 obs. of  5 variables:
-#>   ..$ TimeStamp: chr [1:164] "2018-11-15-09:50:40.059" "2018-11-15-09:50:40.416" "2018-11-15-09:50:41.094" "2018-11-15-09:50:41.440" ...
-#>   ..$ Seconds  : num [1:164] 1215 1215 1216 1216 1217 ...
-#>   ..$ Load     : int [1:164] 47 40 47 61 66 66 66 67 75 80 ...
-#>   ..$ Raw      : num [1:164] 0.0232 0.021 0.0231 0.0273 0.0288 ...
-#>   ..$ Index    : int [1:164] 1 2 3 4 5 6 7 8 9 10 ...
-#>  $ sn              : chr "17348465"
-#>  $ traps           : num 20
-#>  $ start_dt        : POSIXlt[1:1], format: "2018-11-15 09:50:40"
-#>  $ end_dt          : POSIXlt[1:1], format: "2018-11-15 09:51:37"
-#>  $ seconds         : num 57
-#>  $ max_load        : int 1385
-#>  $ min_load        : int 40
+#>  $ data            :'data.frame':    1364 obs. of  5 variables:
+#>   ..$ TimeStamp: chr [1:1364] "2018-11-30-10:36:06.837" "2018-11-30-10:36:07.186" "2018-11-30-10:36:07.537" "2018-11-30-10:36:07.866" ...
+#>   ..$ Seconds  : num [1:1364] 2260 2260 2260 2261 2261 ...
+#>   ..$ Load     : num [1:1364] 43.8 51 68.4 81 97.2 ...
+#>   ..$ Raw      : num [1:1364] 0.0314 0.035 0.0437 0.0499 0.058 ...
+#>   ..$ Index    : int [1:1364] 1 2 3 4 5 6 7 8 9 10 ...
+#>  $ sn              : chr "17348481"
+#>  $ traps           : num 15
+#>  $ start_dt        : POSIXlt[1:1], format: "2018-11-30 10:36:06"
+#>  $ end_dt          : POSIXlt[1:1], format: "2018-11-30 10:43:59"
+#>  $ seconds         : num 473
+#>  $ max_load        : num 996
+#>  $ min_load        : num 41.4
+#>  $ kfactor         : num 0.6
 #>  $ span            : num 0.05
 #>  $ peakdist        : num 10
 #>  $ peakheight      : num 200
 #>  $ peak_analysis   : logi TRUE
-#>  $ smoothed_peaks  :'data.frame':    10 obs. of  2 variables:
-#>   ..$ Index: num [1:10] 105 85 159 32 132 68 115 148 15 47
-#>   ..$ Load : num [1:10] 1322 1313 851 844 683 ...
-#>  $ smoothed_valleys:'data.frame':    10 obs. of  2 variables:
-#>   ..$ Index: num [1:10] 7 60 144 46 19 118 154 93 72 82
-#>   ..$ Load : num [1:10] 66 108 163 238 268 ...
-#>  $ smoothed        :'data.frame':    164 obs. of  2 variables:
-#>   ..$ Index: int [1:164] 1 2 3 4 5 6 7 8 9 10 ...
-#>   ..$ Load : num [1:164] 43.4 46 50.9 58.1 64.9 ...
-#>  $ actual_peaks    :'data.frame':    10 obs. of  2 variables:
-#>   ..$ Load : int [1:10] 1385 1371 1385 852 685 692 1385 528 392 296
-#>   ..$ Index: int [1:10] 105 85 105 32 132 68 105 147 15 48
+#>  $ smoothed_peaks  :'data.frame':    15 obs. of  2 variables:
+#>   ..$ Index: num [1:15] 213 276 505 336 672 ...
+#>   ..$ Load : num [1:15] 791 713 657 579 531 ...
+#>  $ smoothed_valleys:'data.frame':    24 obs. of  2 variables:
+#>   ..$ Index: num [1:24] 1314 1238 467 547 1258 ...
+#>   ..$ Load : num [1:24] 81.2 130.3 150.1 163.1 171.4 ...
+#>  $ smoothed        :'data.frame':    1364 obs. of  2 variables:
+#>   ..$ Index: int [1:1364] 1 2 3 4 5 6 7 8 9 10 ...
+#>   ..$ Load : num [1:1364] 44.6 56.4 68 79.2 90.1 ...
+#>  $ actual_peaks    :'data.frame':    15 obs. of  2 variables:
+#>   ..$ Load : num [1:15] 996 865 752 715 778 ...
+#>   ..$ Index: int [1:15] 221 288 515 326 677 910 761 1145 829 168 ...
 ```
 
 ### Plotting data
