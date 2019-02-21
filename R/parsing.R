@@ -161,7 +161,8 @@ parse_hauls <- function(data, split, min_load, min_time, min_gap, pass) {
       haul_list[[uid]] <- list(haul = haul, data = csv$data, sn = csv$sn,
                                traps = csv$traps, start_dt = csv$start_dt,
                                end_dt = csv$end_dt, seconds = csv$seconds,
-                               max_load = csv$max_load, min_load = csv$min_load,
+                               max_load = max(csv$data$Load),
+                               min_load = min(csv$data$Load),
                                kfactor = csv$kfactor)
       # Increment haul number
       haul = haul + 1
@@ -183,8 +184,9 @@ parse_hauls <- function(data, split, min_load, min_time, min_gap, pass) {
         haul_list[[uid]] <- list(haul = haul, data = csv$data, sn = csv$sn,
                                  traps = csv$traps, start_dt = csv$start_dt,
                                  end_dt = csv$end_dt, seconds = csv$seconds,
-                                 max_load = csv$max_load,
-                                 min_load = csv$min_load, kfactor = csv$kfactor)
+                                 max_load = max(csv$data$Load),
+                                 min_load = min(csv$data$Load),
+                                 kfactor = csv$kfactor)
         # Increment haul number
         haul = haul + 1
         # Next CSV
