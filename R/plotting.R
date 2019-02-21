@@ -38,7 +38,7 @@ plot_hauls <- function(data, fileout) {
                       "Length (min): ", round(data[[i]]$seconds/60, 1),
                       " Max Load: ", data[[i]]$max_load,
                       " Traps/Trawl: ", data[[i]]$traps,
-                      " K-Factor: " , data[[i]]$kfactor, "\n"
+                      " K-Factor: " , round(data[[i]]$kfactor, digits = 2), "\n"
                       )
       if (data[[i]]$peak_analysis) {
         title <- paste0(title, "Span: ", data[[i]]$span,
