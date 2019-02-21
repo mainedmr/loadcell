@@ -49,6 +49,8 @@ load_csvs <- function(dir = getwd()) {
     }
     # Assign better column names to dataframe
     names(data) <- c("TimeStamp", "Seconds", "Load", "Raw")
+    # Convert load from integer to numeric
+    data$Load <- as.numeric(data$Load)
     # Get serial number from filename if available
     sn <- gsub(pattern = ".csv", replacement = "",
                   x = unlist(strsplit(csv, "-", fixed = T))[1],
