@@ -1,4 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 loadcell
 ========
 
@@ -23,8 +24,7 @@ with the following command:
 
 ``` r
 ## Install LoadCell from Bill's GitHub
-devtools::install_github(repo = "bdevoe/loadcell",
-                         auth_token = "de3bbc4b1df6ffeb03127b023edf68cd8b9e1755")
+devtools::install_github(repo = "bdevoe/loadcell")
 ```
 
 Basic function use
@@ -33,20 +33,25 @@ Basic function use
 ### Loading CSVs
 
 A sample CSV of actual load cell data has been included in the package
-directory and will be used in this example. To load load cell CSV files
-from a directory, the `load_csvs` function can be used. The function
-will scan the current working directory, or optionally a directory can
-be passed with the `dir` argument. Directories are scanned recursively
-(CSVs in subdirectories will be included). In this example, my working
-directory is set to `example_data` in the package directory, so the
-single example CSV `17348465-2018.11.15-09.30.24-20.csv` will be loaded.
-The CSV is loaded to an object `csv_data` - using the `str` function
-will show the structure of this object. For more details, see the
-function documentation.
+directory and will be used in this example. This package is intended to
+load CSVs generated from a separate load cell recording program, however
+any load CSV that matches the filename and field name conventions
+produced by this program could be used.
+
+To load load cell CSV files from a directory, the `load_csvs` function
+can be used. The function will scan the current working directory, or
+optionally a directory can be passed with the `dir` argument.
+Directories are scanned recursively (CSVs in subdirectories will be
+included). In this example, my working directory is set to
+`example_data` in the package directory, so the single example CSV
+`17348465-2018.11.15-09.30.24-20.csv` will be loaded. The CSV is loaded
+to an object `csv_data` - using the `str` function will show the
+structure of this object. For more details, see the function
+documentation.
 
 ``` r
 # Set wd to example_data folder
-setwd("X:\\Bio Monitor\\LoadCells\\R\\loadcell\\example_data")
+setwd("./example_data")
 # Load loadcell
 library(loadcell)
 # Load CSV data
@@ -58,15 +63,15 @@ str(csv_data)
 #>   ..$ data    :'data.frame': 17228 obs. of  4 variables:
 #>   .. ..$ TimeStamp: chr [1:17228] "2018-11-30-09:58:27.538" "2018-11-30-09:58:27.877" "2018-11-30-09:58:28.220" "2018-11-30-09:58:28.554" ...
 #>   .. ..$ Seconds  : num [1:17228] 0.35 0.69 1.03 1.37 1.72 ...
-#>   .. ..$ Load     : int [1:17228] 40 40 36 35 34 34 35 39 39 38 ...
+#>   .. ..$ Load     : num [1:17228] 40 40 36 35 34 34 35 39 39 38 ...
 #>   .. ..$ Raw      : num [1:17228] 0.0216 0.0215 0.0202 0.0199 0.0197 ...
 #>   ..$ sn      : chr "17348481"
 #>   ..$ traps   : num 15
 #>   ..$ start_dt: POSIXlt[1:1], format: "2018-11-30 09:58:27"
 #>   ..$ end_dt  : POSIXlt[1:1], format: "2018-11-30 11:37:37"
 #>   ..$ seconds : num 5950
-#>   ..$ max_load: int 1764
-#>   ..$ min_load: int 28
+#>   ..$ max_load: num 1764
+#>   ..$ min_load: num 28
 #>   ..$ kfactor : num 0
 #>  - attr(*, "class")= chr "LoadCellData"
 ```
@@ -138,9 +143,9 @@ line that occured for the haul.
 ``` r
 # Parse peaks from LoadCellHauls class object
 peaks <- parse_peaks(data = haul_data, 
-                     span=.05, # Percent smoothing to apply
-                     peakdist=10, # Minimum 10 samples between peaks
-                     peakheight=200) # Minimum peak height of 200 LBF
+                     span = .05, # Percent smoothing to apply
+                     peakdist = 10, # Minimum 10 samples between peaks
+                     peakheight = 200) # Minimum peak height of 200 LBF
 # Examine third haul peak analysis
 str(peaks[[3]])
 #> List of 18
@@ -200,8 +205,35 @@ folder in the package directory.
 
 ``` r
 # Set wd to example_output folder
-setwd("X:\\Bio Monitor\\LoadCells\\R\\loadcell\\example_output")
+setwd("./example_output")
 # Export
 export_loadcell(peaks, prefix = "TEST")
 #> [1] TRUE
+```
+
+Piping
+------
+
+The provided functions also work with piping - here is the same example
+given from loading to export, but executed in a single pipe.
+
+``` r
+# Set wd to example_data folder
+setwd("./example_output")
+# Load loadcell
+library(loadcell)
+library(magrittr)
+# Load CSV data
+final_data <- load_csvs() %>%
+  adjust_load(kfactor = 0.6) %>%
+  parse_hauls(split = T,
+              min_load = 40,
+              min_time = 30,
+              min_gap = 30,
+              pass = 30) %>%
+  parse_peaks(span = .05,
+              peakdist = 10,
+              peakheight = 200) %>%
+  export_loadcell(prefix = "TEST")
+  
 ```
