@@ -23,7 +23,7 @@ Then, install the load cell package directly from MaineDMR’s GitHub account
 with the following command:
 
 ``` r
-## Install LoadCell from Bill's GitHub
+## Install LoadCell from DMR's GitHub
 devtools::install_github(repo = "mainedmr/loadcell")
 ```
 
