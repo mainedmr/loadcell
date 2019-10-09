@@ -19,12 +19,12 @@ First, install `devtools` with the following command:
 install.packages('devtools')
 ```
 
-Then, install the load cell package directly from Bill’s GitHub account
+Then, install the load cell package directly from MaineDMR’s GitHub account
 with the following command:
 
 ``` r
 ## Install LoadCell from Bill's GitHub
-devtools::install_github(repo = "bdevoe/loadcell")
+devtools::install_github(repo = "mainedmr/loadcell")
 ```
 
 Basic function use
