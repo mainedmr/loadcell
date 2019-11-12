@@ -53,7 +53,7 @@ for (row in 1:nrow(hauls)) {
     # Check that provided endline load from haul file is reasonably close to
     # load at same index position in data
     load2 <- el_data[el_data$index <= index,]$load[1]
-    if (abs(load - load2) > 5) {
+    if (abs(load - load2) > 3) {
       comment <- paste0("Haul ", uid, " has potential load/index mismatch...")
       message(comment)
     } else (comment <- "")
